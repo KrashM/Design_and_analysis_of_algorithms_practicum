@@ -14,14 +14,6 @@ struct Interval{
     size_t start, end;
 };
 
-bool insideInterval(Interval const &superInterval, Interval const &subInterval){
-    return superInterval.start <= subInterval.start && subInterval.start <= superInterval.end;
-}
-
-Interval combineIntervals(Interval const &left, Interval const &right){
-    return Interval{min(left.start, right.start), max(left.end, right.end)};
-}
-
 int main(){
 
     ios::sync_with_stdio(false);
@@ -44,17 +36,21 @@ int main(){
         return lhs.start < rhs.start;
     });
 
-    for(size_t i = 1; i < intervals.size(); ++i)
-        if(insideInterval(intervals[i - 1], intervals[i])){
+    start = intervals[0].start;
+    end = intervals[0].end;
 
-            intervals[i] = combineIntervals(intervals[i - 1], intervals[i]);
-            intervals.erase(intervals.begin() + (--i));
+    for(size_t i = 1; i < intervals.size(); ++i)
+        if(intervals[i].start <= end)
+            end = max(end, intervals[i].end);
+        else{
+
+            result += end - start + 1;
+            start = intervals[i].start;
+            end = intervals[i].end;
 
         }
 
-    for(size_t i = 0; i < intervals.size(); ++i)
-        result += intervals[i].end - intervals[i].start + 1;
-
+    result += end - start + 1;
     cout << result << '\n';
 
 }
